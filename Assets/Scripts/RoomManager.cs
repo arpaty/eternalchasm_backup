@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RoomManager : MonoBehaviour
 {
+    private GameObject playerObject;
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject roomPrefab;
     [SerializeField] private int maxRooms = 15;
@@ -59,6 +60,10 @@ public class RoomManager : MonoBehaviour
         else if(roomCount < minRooms)
         {
             Debug.Log("RoomCount was less than the minimum amount of rooms. Trying again...");
+
+            Destroy(playerObject);
+            playerObject = null;
+
             RegenerateRooms();
         }
         else if (!generationComplete)
@@ -81,7 +86,10 @@ public class RoomManager : MonoBehaviour
         initialRoom.GetComponent<Room>().RoomIndex = roomIndex;
         roomObjects.Add(initialRoom);
 
-        InstantiatePlayer(roomIndex);
+        if(playerObject == null)
+        {
+            InstantiatePlayer(roomIndex);
+        }
 
         cameraFollow.SetRoomToFollow(initialRoom.transform);
     }
@@ -91,7 +99,7 @@ public class RoomManager : MonoBehaviour
         Vector3 playerPosition = GetPositionFromGridIndex(roomIndex);
         playerPosition.z = 0;
 
-        GameObject playerObject = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
+        playerObject = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
         playerObject.name = "Player";
     }
 
@@ -134,6 +142,7 @@ public class RoomManager : MonoBehaviour
         generationComplete = false;
 
         Vector2Int initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
+
         StartRoomGenerationFromRoom(initialRoomIndex);
     }
 
@@ -199,7 +208,7 @@ public class RoomManager : MonoBehaviour
         if( x > 0 && roomGrid[x - 1, y] != 0) count++; // left neighbour
         if( x < gridSizeX - 1 && roomGrid[x + 1, y] != 0) count++; // right neighbour
         if( y > 0 && roomGrid[x, y - 1] != 0) count++; // bottom neighbour
-        if( y > gridSizeY - 1 && roomGrid[x, y + 1] != 0) count++; // top neighbour
+        if( y < gridSizeY - 1 && roomGrid[x, y + 1] != 0) count++; // top neighbour
 
         return count;
     }
