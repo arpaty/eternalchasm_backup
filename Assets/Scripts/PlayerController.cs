@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     [SerializeField] private float moveSpeed = 5f;
     private Room currentRoom;
+    [SerializeField] private RoomManager roomManager;       // room creationnél instantiatelem a playert, így nem mentõdik el a roommanager, look into it
     private Vector3 movement;
 
     void Start()
@@ -28,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if the character collides with something
+        // check if the character collides with something
         Debug.Log("Collided with: " + collision.gameObject.name);
     }
 
@@ -36,8 +37,10 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Doors"))
         {
-            // Implement your door logic here
+            Vector2Int direction = DetermineDirectionOfDoor(other.gameObject);
             Debug.Log("Player entered a door.");
+
+            MoveToConnectedRoom(direction);
         }
     }
 
@@ -46,23 +49,63 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
     }
 
-      // Call this method when you want the player to transition to another room
     void MoveToConnectedRoom(Vector2Int direction)
     {
         if (currentRoom != null)
         {
-            // Check with the current room for the connected room in the specified direction
             Vector2Int connectedRoomIndex = currentRoom.GetConnectedRoomIndex(direction);
 
-            // Perform the transition logic (update player position, camera follow, etc.)
-            // This is where you might want to access the RoomManager or some other manager script
-            // to handle the room transition logic.
+            //Vector3 newPosition = currentRoom.GetPositionFromGridIndex(connectedRoomIndex);
+            //playerObject.transform.position = newPosition;
 
-            // For now, we'll just print a message
             Debug.Log($"Player transitioning to the connected room {connectedRoomIndex}");
 
-            // Clear the current room reference after transition
             currentRoom = null;
         }
+    }
+
+    Vector2Int DetermineDirectionOfDoor(GameObject door)
+    {
+        Vector3 doorPosition = door.transform.position;
+        Vector3 playerPosition = transform.position;
+
+        // difference in position
+        Vector3 positionDifference = doorPosition - playerPosition;
+
+        float xDifference = Mathf.Abs(positionDifference.x);
+        float yDifference = Mathf.Abs(positionDifference.y);
+
+        Vector2Int directionOfDoor;
+
+        // check which axis has a larger difference
+        if (xDifference > yDifference)
+        {
+            // more horizontally aligned
+            if (positionDifference.x > 0)
+            {
+                directionOfDoor = Vector2Int.right;
+            }
+            else
+            {
+                directionOfDoor = Vector2Int.left;
+            }
+        }
+        else
+        {
+            // more vertically aligned
+            if (positionDifference.y > 0)
+            {
+                directionOfDoor = Vector2Int.up;
+            }
+            else
+            {
+                directionOfDoor = Vector2Int.down;
+            }
+        }
+
+        // debug
+        Debug.Log($"The door is: {directionOfDoor}");
+
+        return directionOfDoor;
     }
 }
