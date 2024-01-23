@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
             Vector2Int direction = DetermineDirectionOfDoor(other.gameObject);
             Debug.Log("Player entered a door.");
 
-            MoveToConnectedRoom(direction);
+            MoveToConnectedRoom(direction); // be kell fejezni még, nincs meg
         }
     }
 

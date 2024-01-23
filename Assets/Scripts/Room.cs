@@ -16,23 +16,81 @@ public class Room : MonoBehaviour
         if  (direction == Vector2Int.up)
         {
             topDoor.SetActive(true);
+            SetDoorTriggerState(topDoor, true);
         }
 
         if  (direction == Vector2Int.down)
         {
             bottomDoor.SetActive(true);
+            SetDoorTriggerState(bottomDoor, true);
         }
 
         if  (direction == Vector2Int.left)
         {
             leftDoor.SetActive(true);
+            SetDoorTriggerState(leftDoor, true);
         }
 
         if  (direction == Vector2Int.right)
         {
             rightDoor.SetActive(true);
+            SetDoorTriggerState(rightDoor, true);
         }
     }
+
+    Transform GetDoorTransform(Vector2Int direction)
+    {
+        Transform doorsParent = transform.Find("Doors");
+
+        if (doorsParent == null)
+        {
+            Debug.LogError("Doors parent not found.");
+            return null;
+        }
+
+        Transform doorTransform = null;
+
+        if (direction == Vector2Int.left)
+            doorTransform = doorsParent.Find("LeftDoor");
+        else if (direction == Vector2Int.right)
+            doorTransform = doorsParent.Find("RightDoor");
+        else if (direction == Vector2Int.up)
+            doorTransform = doorsParent.Find("TopDoor");
+        else if (direction == Vector2Int.down)
+            doorTransform = doorsParent.Find("BottomDoor");
+
+        if (doorTransform == null)
+        {
+            Debug.LogError($"Door in direction {direction} not found.");
+        }
+
+        return doorTransform;
+    }
+
+    public void SetDoorTriggerState(GameObject doorObject, bool isTrigger)
+    {
+        // Get the Collider2D component from the doorObject
+        Collider2D doorCollider = doorObject.GetComponent<Collider2D>();
+
+        // Check if the doorCollider is not null before trying to access its properties
+        if (doorCollider != null)
+        {
+            doorCollider.isTrigger = isTrigger;
+        }
+        else
+        {
+            Debug.LogError("Collider2D component not found on the doorObject.");
+        }
+    }
+
+    public void DisableAllDoors()
+    {
+        SetDoorTriggerState(topDoor, false);
+        SetDoorTriggerState(bottomDoor, false);
+        SetDoorTriggerState(leftDoor, false);
+        SetDoorTriggerState(rightDoor, false);
+    }
+
 
     // This method returns the connected room index based on the direction
     public Vector2Int GetConnectedRoomIndex(Vector2Int direction)

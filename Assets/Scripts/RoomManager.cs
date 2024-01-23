@@ -39,7 +39,6 @@ public class RoomManager : MonoBehaviour
             Debug.LogError("CameraFollow script not found on the main camera.");
         }
 
-
         Vector2Int initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
         StartRoomGenerationFromRoom(initialRoomIndex);
     }
@@ -146,8 +145,22 @@ public class RoomManager : MonoBehaviour
         StartRoomGenerationFromRoom(initialRoomIndex);
     }
 
+    void DisableAllDoors()
+    {
+        foreach (var roomObject in roomObjects)
+        {
+            Room roomScript = roomObject.GetComponent<Room>();
+            if (roomScript != null)
+            {
+                roomScript.DisableAllDoors();
+            }
+        }
+    }
+
     void OpenDoors(GameObject room, int x, int y)
     {
+        DisableAllDoors();
+
         Room newRoomScript = room.GetComponent<Room>();
 
         // neighbours
@@ -185,8 +198,8 @@ public class RoomManager : MonoBehaviour
             newRoomScript.OpenDoor(Vector2Int.up);
             topRoomScript.OpenDoor(Vector2Int.down);
         }
-
     }
+
 
     Room GetRoomScriptAt(Vector2Int index)
     {
