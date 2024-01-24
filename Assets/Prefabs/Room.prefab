@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 191818396728633839}
   - component: {fileID: 6620407602810403351}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Walls
   m_TagString: Walls
   m_Icon: {fileID: 0}
@@ -67,7 +67,7 @@ GameObject:
   - component: {fileID: 1993562410345570517}
   - component: {fileID: 5142779339382374114}
   - component: {fileID: 3853290338731879399}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BottomDoor
   m_TagString: Doors
   m_Icon: {fileID: 0}
@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 6867028908925227621}
   - component: {fileID: 3844826485067171669}
   - component: {fileID: 65341507033921812}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftWall
   m_TagString: Walls
   m_Icon: {fileID: 0}
@@ -334,7 +334,7 @@ GameObject:
   - component: {fileID: 275648194874399728}
   - component: {fileID: 1772709206406827361}
   - component: {fileID: 2589264072081225657}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BottomWall
   m_TagString: Walls
   m_Icon: {fileID: 0}
@@ -443,7 +443,7 @@ GameObject:
   - component: {fileID: 7588490889303592593}
   - component: {fileID: 1803773184786687709}
   - component: {fileID: 6214460984216362109}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TopDoor
   m_TagString: Doors
   m_Icon: {fileID: 0}
@@ -552,7 +552,7 @@ GameObject:
   - component: {fileID: 4856401177845310338}
   - component: {fileID: 9146643053942944495}
   - component: {fileID: 2848430637184735634}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LeftDoor
   m_TagString: Doors
   m_Icon: {fileID: 0}
@@ -659,7 +659,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2545650190163090534}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Doors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -695,7 +695,7 @@ GameObject:
   - component: {fileID: 7903482056891272990}
   - component: {fileID: 2669692146019734871}
   - component: {fileID: 3812963209968930335}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: RightDoor
   m_TagString: Doors
   m_Icon: {fileID: 0}
@@ -804,7 +804,7 @@ GameObject:
   - component: {fileID: 2495512502925047948}
   - component: {fileID: 1921589830367920650}
   - component: {fileID: 1123351830395640313}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TopWall
   m_TagString: Walls
   m_Icon: {fileID: 0}
@@ -913,7 +913,7 @@ GameObject:
   - component: {fileID: 6128093502762644105}
   - component: {fileID: 5753820025204047639}
   - component: {fileID: 42575752739117823}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightWall
   m_TagString: Walls
   m_Icon: {fileID: 0}

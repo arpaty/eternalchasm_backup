@@ -69,14 +69,11 @@ public class Room : MonoBehaviour
 
     public void SetDoorTriggerState(GameObject doorObject, bool isTrigger)
     {
-        // Get the Collider2D component from the doorObject
         Collider2D doorCollider = doorObject.GetComponent<Collider2D>();
 
-        // Check if the doorCollider is not null before trying to access its properties
         if (doorCollider != null)
         {
             doorCollider.isTrigger = isTrigger;
-            Debug.Log($"Collider is set as trigger: {isTrigger}");
         }
         else
         {

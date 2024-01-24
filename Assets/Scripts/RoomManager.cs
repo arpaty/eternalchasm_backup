@@ -5,6 +5,7 @@ using UnityEngine;
 public class RoomManager : MonoBehaviour
 {
     private GameObject playerObject;
+    private PlayerController playerController;
     private Vector2 doorSize = new Vector2(1.0f, 1.0f);
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject roomPrefab;
@@ -33,6 +34,8 @@ public class RoomManager : MonoBehaviour
     {
         roomGrid = new int [gridSizeX, gridSizeY];
         roomQueue = new Queue<Vector2Int>();
+
+        playerController = PlayerController.Instance;
 
         cameraFollow = Camera.main.GetComponent<CameraFollow>();
         if (cameraFollow == null)
@@ -88,19 +91,22 @@ public class RoomManager : MonoBehaviour
 
         if(playerObject == null)
         {
-            InstantiatePlayer(roomIndex);
+            setUpPlayer(roomIndex, initialRoom);
         }
 
         cameraFollow.SetRoomToFollow(initialRoom.transform);
     }
 
-    private void InstantiatePlayer(Vector2Int roomIndex)
+    private void setUpPlayer(Vector2Int roomIndex, GameObject initialRoom)
     {
         Vector3 playerPosition = GetPositionFromGridIndex(roomIndex);
         playerPosition.z = 0;
 
         playerObject = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
         playerObject.name = "Player";
+
+        playerController.SetCurrentRoom(initialRoom.GetComponent<Room>());
+        Debug.Log($"The room the player is in: {playerController.GetCurrentRoom()}");       // nézd meg ha regeneratelni kell a roomokat, mert akkor lehet újra kell createlni tudod
     }
 
     private bool TryGenerateRoom(Vector2Int roomIndex)
@@ -173,59 +179,33 @@ public class RoomManager : MonoBehaviour
         if(x > 0 && roomGrid[x- 1, y] != 0)
         {
             // neighbouring room to the left
-            AdjustWallCollidersForDoor(Vector2Int.left, doorSize);
             newRoomScript.OpenDoor(Vector2Int.left);
 
-            AdjustWallCollidersForDoor(Vector2Int.right, doorSize);
             leftRoomScript.OpenDoor(Vector2Int.right);
         }
 
         if(x < gridSizeX - 1 && roomGrid[x + 1, y] != 0)
         {
             // neighbouring room to the right
-            AdjustWallCollidersForDoor(Vector2Int.right, doorSize);
             newRoomScript.OpenDoor(Vector2Int.right);
 
-            AdjustWallCollidersForDoor(Vector2Int.left, doorSize);
             rightRoomScript.OpenDoor(Vector2Int.left);
         }
 
         if(y > 0 && roomGrid[x, y - 1] != 0)
         {
             // neighbouring room below
-            AdjustWallCollidersForDoor(Vector2Int.down, doorSize);
             newRoomScript.OpenDoor(Vector2Int.down);
 
-            AdjustWallCollidersForDoor(Vector2Int.up, doorSize);
             bottomRoomScript.OpenDoor(Vector2Int.up);
         }
 
         if(y < gridSizeY - 1 && roomGrid[x, y + 1] != 0)
         {
             // neighbouring room above
-            AdjustWallCollidersForDoor(Vector2Int.up, doorSize);
             newRoomScript.OpenDoor(Vector2Int.up);
 
-            AdjustWallCollidersForDoor(Vector2Int.down, doorSize);
             topRoomScript.OpenDoor(Vector2Int.down);
-        }
-    }
-
-    void AdjustWallCollidersForDoor(Vector2Int doorPosition, Vector2 doorSize) // does not seem to be necessary currently (tba)
-    {
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(doorPosition, doorSize, 0f);
-
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.CompareTag("Walls"))
-            {
-                BoxCollider2D wallCollider = collider.GetComponent<BoxCollider2D>();
-
-                if (wallCollider != null)
-                {
-                    wallCollider.enabled = false;
-                }
-            }
         }
     }
 

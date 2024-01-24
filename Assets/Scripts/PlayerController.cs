@@ -2,11 +2,18 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance { get; private set; } // singleton
+
     Rigidbody2D rb;
     [SerializeField] private float moveSpeed = 5f;
-    private Room currentRoom;
     [SerializeField] private RoomManager roomManager;       // room creationnél instantiatelem a playert, így nem mentõdik el a roommanager, look into it
     private Vector3 movement;
+    private Room currentRoom;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -27,6 +34,11 @@ public class PlayerController : MonoBehaviour
         movement = new Vector3(horizontal, vertical, 0f);
     }
 
+    void FixedUpdate()
+    {
+        rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         // check if the character collides with something
@@ -35,18 +47,18 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Doors"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Doors"))
         {
+            // Handle door interaction
+            Debug.Log("Player entered the door!");
             Vector2Int direction = DetermineDirectionOfDoor(other.gameObject);
-            Debug.Log("Player entered a door.");
-
             MoveToConnectedRoom(direction); // be kell fejezni még, nincs meg
         }
-    }
-
-    void FixedUpdate()
-    {
-        rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
+        else if (other.CompareTag("Walls"))
+        {
+            // Handle wall interaction
+            Debug.Log("Player hit a wall!");
+        }
     }
 
     void MoveToConnectedRoom(Vector2Int direction)
@@ -107,5 +119,15 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"The door is: {directionOfDoor}");
 
         return directionOfDoor;
+    }
+
+    public Room GetCurrentRoom()
+    {
+        return currentRoom;
+    }
+
+    public void SetCurrentRoom(Room room)
+    {
+        currentRoom = room;
     }
 }
