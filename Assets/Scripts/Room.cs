@@ -76,6 +76,7 @@ public class Room : MonoBehaviour
         if (doorCollider != null)
         {
             doorCollider.isTrigger = isTrigger;
+            Debug.Log($"Collider is set as trigger: {isTrigger}");
         }
         else
         {

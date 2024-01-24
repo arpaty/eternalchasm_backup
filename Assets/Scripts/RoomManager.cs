@@ -5,6 +5,7 @@ using UnityEngine;
 public class RoomManager : MonoBehaviour
 {
     private GameObject playerObject;
+    private Vector2 doorSize = new Vector2(1.0f, 1.0f);
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject roomPrefab;
     [SerializeField] private int maxRooms = 15;
@@ -159,8 +160,6 @@ public class RoomManager : MonoBehaviour
 
     void OpenDoors(GameObject room, int x, int y)
     {
-        DisableAllDoors();
-
         Room newRoomScript = room.GetComponent<Room>();
 
         // neighbours
@@ -174,32 +173,61 @@ public class RoomManager : MonoBehaviour
         if(x > 0 && roomGrid[x- 1, y] != 0)
         {
             // neighbouring room to the left
+            AdjustWallCollidersForDoor(Vector2Int.left, doorSize);
             newRoomScript.OpenDoor(Vector2Int.left);
+
+            AdjustWallCollidersForDoor(Vector2Int.right, doorSize);
             leftRoomScript.OpenDoor(Vector2Int.right);
         }
 
         if(x < gridSizeX - 1 && roomGrid[x + 1, y] != 0)
         {
             // neighbouring room to the right
+            AdjustWallCollidersForDoor(Vector2Int.right, doorSize);
             newRoomScript.OpenDoor(Vector2Int.right);
+
+            AdjustWallCollidersForDoor(Vector2Int.left, doorSize);
             rightRoomScript.OpenDoor(Vector2Int.left);
         }
 
         if(y > 0 && roomGrid[x, y - 1] != 0)
         {
             // neighbouring room below
+            AdjustWallCollidersForDoor(Vector2Int.down, doorSize);
             newRoomScript.OpenDoor(Vector2Int.down);
+
+            AdjustWallCollidersForDoor(Vector2Int.up, doorSize);
             bottomRoomScript.OpenDoor(Vector2Int.up);
         }
 
         if(y < gridSizeY - 1 && roomGrid[x, y + 1] != 0)
         {
             // neighbouring room above
+            AdjustWallCollidersForDoor(Vector2Int.up, doorSize);
             newRoomScript.OpenDoor(Vector2Int.up);
+
+            AdjustWallCollidersForDoor(Vector2Int.down, doorSize);
             topRoomScript.OpenDoor(Vector2Int.down);
         }
     }
 
+    void AdjustWallCollidersForDoor(Vector2Int doorPosition, Vector2 doorSize) // does not seem to be necessary currently (tba)
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(doorPosition, doorSize, 0f);
+
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Walls"))
+            {
+                BoxCollider2D wallCollider = collider.GetComponent<BoxCollider2D>();
+
+                if (wallCollider != null)
+                {
+                    wallCollider.enabled = false;
+                }
+            }
+        }
+    }
 
     Room GetRoomScriptAt(Vector2Int index)
     {
