@@ -105,8 +105,11 @@ public class RoomManager : MonoBehaviour
         playerObject = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
         playerObject.name = "Player";
 
-        playerController.SetCurrentRoom(initialRoom.GetComponent<Room>());
-        Debug.Log($"The room the player is in: {playerController.GetCurrentRoom()}");       // nézd meg ha regeneratelni kell a roomokat, mert akkor lehet újra kell createlni tudod
+        if(playerController != null)
+        {
+            playerController.SetCurrentRoom(initialRoom.GetComponent<Room>());
+            Debug.Log($"The room the player is in: {playerController.GetCurrentRoom()}");       // nézd meg ha regeneratelni kell a roomokat, mert akkor lehet újra kell createlni tudod
+        }
     }
 
     private bool TryGenerateRoom(Vector2Int roomIndex)
