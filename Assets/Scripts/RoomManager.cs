@@ -52,6 +52,7 @@ public class RoomManager : MonoBehaviour
         if(roomQueue.Count > 0 && roomCount < maxRooms && !generationComplete)
         {
             Vector2Int roomIndex = roomQueue.Dequeue();
+            Debug.Log($"Roomindex: {roomIndex}");
             int gridX = roomIndex.x;
             int gridY = roomIndex.y;
 
@@ -122,9 +123,6 @@ public class RoomManager : MonoBehaviour
         
         if(Random.value < 0.5f && roomIndex != Vector2Int.zero)
             return false;
-
-        if(CountAdjacentRooms(roomIndex) > 1)
-            return false;       // snake-like rooms
 
         roomQueue.Enqueue(roomIndex);
         roomGrid[x, y] = 1;
@@ -220,21 +218,6 @@ public class RoomManager : MonoBehaviour
             return roomObject.GetComponent<Room>();
 
         return null;
-    }
-
-    private int CountAdjacentRooms(Vector2Int roomIndex)
-    {
-        int x = roomIndex.x;
-        int y = roomIndex.y;
-
-        int count = 0;
-
-        if( x > 0 && roomGrid[x - 1, y] != 0) count++; // left neighbour
-        if( x < gridSizeX - 1 && roomGrid[x + 1, y] != 0) count++; // right neighbour
-        if( y > 0 && roomGrid[x, y - 1] != 0) count++; // bottom neighbour
-        if( y < gridSizeY - 1 && roomGrid[x, y + 1] != 0) count++; // top neighbour
-
-        return count;
     }
 
     private Vector3 GetPositionFromGridIndex(Vector2Int gridIndex)
