@@ -89,7 +89,7 @@ public class RoomManager : MonoBehaviour
         initialRoom.GetComponent<Room>().RoomIndex = roomIndex;
         roomObjects.Add(initialRoom);
 
-        if(playerObject == null)
+        if(playerObject == null && initialRoom != null)
         {
             setUpPlayer(roomIndex, initialRoom);
         }
