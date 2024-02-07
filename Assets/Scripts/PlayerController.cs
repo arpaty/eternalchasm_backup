@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentRoom != null)
         {
-            Debug.Log("Belemegy");
+            /*Debug.Log("Belemegy");
             Vector2Int connectedRoomIndex = currentRoom.GetConnectedRoomIndex(direction);
 
             //Vector3 newPosition = currentRoom.GetDoorPositionInConnectedRoom(direction);
@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log($"Player transitioning to the connected room {connectedRoomIndex}");
 
-            currentRoom = null;
+            currentRoom = null;*/
         }
     }
 
