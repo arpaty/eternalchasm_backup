@@ -9,8 +9,8 @@ public class RoomManager : MonoBehaviour
     private Vector2 doorSize = new Vector2(1.0f, 1.0f);
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject roomPrefab;
-    [SerializeField] private int maxRooms = 15;
-    [SerializeField] private int minRooms = 10;
+    [SerializeField] private int maxRooms = 20;
+    [SerializeField] private int minRooms = 16;
 
     int roomWidth = 20;
     int roomHeight = 12;
@@ -65,13 +65,13 @@ public class RoomManager : MonoBehaviour
 
             Destroy(playerObject);
             playerObject = null;
+            PlayerController.Instance.SetCurrentRoom(null);
 
             RegenerateRooms();
         }
-        else if (!generationComplete)
+        else if (generationComplete)
         {
             Debug.Log($"Generation complete, {roomCount} rooms created");
-            generationComplete = true;
         }
     }
 
@@ -113,8 +113,7 @@ public class RoomManager : MonoBehaviour
 
         PlayerController.Instance.SetCurrentRoom(currentRoomComponent);
 
-        //Debug.Log($"The room the player is in: {PlayerController.Instance.GetCurrentRoom()}"); // n�zd meg ha regeneratelni kell a roomokat, mert akkor lehet �jra kell createlni tudod
-        Debug.Log("Player setup successful");
+        Debug.Log($"The room the player is in: {PlayerController.Instance.GetCurrentRoom()}"); // n�zd meg ha regeneratelni kell a roomokat, mert akkor lehet �jra kell createlni tudod
     }
 
     private bool TryGenerateRoom(Vector2Int roomIndex)
@@ -122,7 +121,13 @@ public class RoomManager : MonoBehaviour
         int x = roomIndex.x;
         int y = roomIndex.y;
 
+         if (x < 0 || x >= gridSizeX || y < 0 || y >= gridSizeY)
+            return false;
+
         if(roomCount >= maxRooms)
+            return false;
+        
+        if (roomGrid[x, y] == 1)
             return false;
         
         if(Random.value < 0.5f && roomIndex != Vector2Int.zero)
