@@ -35,8 +35,6 @@ public class RoomManager : MonoBehaviour
         roomGrid = new int [gridSizeX, gridSizeY];
         roomQueue = new Queue<Vector2Int>();
 
-        playerController = PlayerController.Instance;
-
         cameraFollow = Camera.main.GetComponent<CameraFollow>();
         if (cameraFollow == null)
         {
@@ -52,7 +50,7 @@ public class RoomManager : MonoBehaviour
         if(roomQueue.Count > 0 && roomCount < maxRooms && !generationComplete)
         {
             Vector2Int roomIndex = roomQueue.Dequeue();
-            Debug.Log($"Roomindex: {roomIndex}");
+            //Debug.Log($"Roomindex: {roomIndex}");
             int gridX = roomIndex.x;
             int gridY = roomIndex.y;
 
@@ -100,17 +98,23 @@ public class RoomManager : MonoBehaviour
 
     private void setUpPlayer(Vector2Int roomIndex, GameObject initialRoom)
     {
+        Room currentRoomComponent = initialRoom.GetComponent<Room>();
         Vector3 playerPosition = GetPositionFromGridIndex(roomIndex);
         playerPosition.z = 0;
 
         playerObject = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
         playerObject.name = "Player";
 
-        if(playerController != null)
+        if(PlayerController.Instance == null)
         {
-            playerController.SetCurrentRoom(initialRoom.GetComponent<Room>());
-            Debug.Log($"The room the player is in: {playerController.GetCurrentRoom()}");       // nézd meg ha regeneratelni kell a roomokat, mert akkor lehet újra kell createlni tudod
+            Debug.LogError("PlayerController.Instance is null. Make sure it's properly initialized before calling setUpPlayer.");
+            return;
         }
+
+        PlayerController.Instance.SetCurrentRoom(currentRoomComponent);
+
+        //Debug.Log($"The room the player is in: {PlayerController.Instance.GetCurrentRoom()}"); // nï¿½zd meg ha regeneratelni kell a roomokat, mert akkor lehet ï¿½jra kell createlni tudod
+        Debug.Log("Player setup successful");
     }
 
     private bool TryGenerateRoom(Vector2Int roomIndex)
@@ -220,7 +224,7 @@ public class RoomManager : MonoBehaviour
         return null;
     }
 
-    private Vector3 GetPositionFromGridIndex(Vector2Int gridIndex)
+    internal Vector3 GetPositionFromGridIndex(Vector2Int gridIndex)
     {
         int gridX = gridIndex.x;
         int gridY = gridIndex.y;

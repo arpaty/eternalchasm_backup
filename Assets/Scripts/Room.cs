@@ -109,4 +109,28 @@ public class Room : MonoBehaviour
             Debug.Log("Player entered the room!");
         }
     }
+
+    public GameObject TopDoor
+    {
+        get => topDoor;
+        set => topDoor = value;
+    }
+
+    public GameObject BottomDoor
+    {
+        get => bottomDoor;
+        set => bottomDoor = value;
+    }
+
+    public GameObject LeftDoor
+    {
+        get => leftDoor;
+        set => leftDoor = value;
+    }
+
+    public GameObject RightDoor
+    {
+        get => rightDoor;
+        set => rightDoor = value;
+    }
 }
