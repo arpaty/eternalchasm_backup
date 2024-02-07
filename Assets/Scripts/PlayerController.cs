@@ -2,17 +2,33 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController Instance { get; private set; } // singleton
+    public static PlayerController instance { get; private set; } // singleton
 
     Rigidbody2D rb;
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private RoomManager roomManager;       // room creationnél instantiatelem a playert, így nem mentõdik el a roommanager, look into it
+    [SerializeField] private RoomManager roomManager;       // room creationnï¿½l instantiatelem a playert, ï¿½gy nem mentï¿½dik el a roommanager, look into it
     private Vector3 movement;
     private Room currentRoom;
 
-    private void Awake()
+    public static PlayerController Instance
     {
-        Instance = this;
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<PlayerController>();
+            }
+            return instance;
+        }
+    }
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            Debug.Log("PlayerController instance created.");
+        }
     }
 
     void Start()
@@ -42,7 +58,7 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         // check if the character collides with something
-        Debug.Log("Collided with: " + collision.gameObject.name);
+        //Debug.Log("Collided with: " + collision.gameObject.name);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -52,12 +68,12 @@ public class PlayerController : MonoBehaviour
             // Handle door interaction
             Debug.Log("Player entered the door!");
             Vector2Int direction = DetermineDirectionOfDoor(other.gameObject);
-            MoveToConnectedRoom(direction); // be kell fejezni még, nincs meg
+            MoveToConnectedRoom(direction); // be kell fejezni mï¿½g, nincs meg
         }
         else if (other.CompareTag("Walls"))
         {
             // Handle wall interaction
-            Debug.Log("Player hit a wall!");
+            //Debug.Log("Player hit a wall!");
         }
     }
 
@@ -65,9 +81,11 @@ public class PlayerController : MonoBehaviour
     {
         if (currentRoom != null)
         {
+            Debug.Log("Belemegy");
             Vector2Int connectedRoomIndex = currentRoom.GetConnectedRoomIndex(direction);
 
-            //Vector3 newPosition = currentRoom.GetPositionFromGridIndex(connectedRoomIndex);
+            //Vector3 newPosition = currentRoom.GetDoorPositionInConnectedRoom(direction);
+            Vector3 newPosition = roomManager.GetPositionFromGridIndex(connectedRoomIndex);
             //playerObject.transform.position = newPosition;
 
             Debug.Log($"Player transitioning to the connected room {connectedRoomIndex}");
@@ -116,7 +134,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // debug
-        Debug.Log($"The door is: {directionOfDoor}");
+        //Debug.Log($"The door is: {directionOfDoor}");
 
         return directionOfDoor;
     }
