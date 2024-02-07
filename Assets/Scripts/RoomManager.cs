@@ -18,8 +18,6 @@ public class RoomManager : MonoBehaviour
     [SerializeField] int gridSizeX = 10;
     [SerializeField] int gridSizeY = 10;
 
-    private CameraFollow cameraFollow;
-
     private List<GameObject> roomObjects = new List<GameObject>();
 
     private Queue<Vector2Int> roomQueue = new Queue<Vector2Int>();
@@ -36,12 +34,6 @@ public class RoomManager : MonoBehaviour
     {
         roomGrid = new int [gridSizeX, gridSizeY];
         roomQueue = new Queue<Vector2Int>();
-
-        cameraFollow = Camera.main.GetComponent<CameraFollow>();
-        if (cameraFollow == null)
-        {
-            Debug.LogError("CameraFollow script not found on the main camera.");
-        }
 
         Vector2Int initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
         StartRoomGenerationFromRoom(initialRoomIndex);
@@ -99,8 +91,6 @@ public class RoomManager : MonoBehaviour
             setUpPlayer(roomIndex, initialRoom);
         }
 
-        cameraFollow.SetRoomToFollow(initialRoom.transform);
-
         lastGeneratedRoom = initialRoom.GetComponent<Room>();
     }
 
@@ -120,6 +110,8 @@ public class RoomManager : MonoBehaviour
         }
 
         PlayerController.Instance.SetCurrentRoom(currentRoomComponent);
+        PlayerController.Instance.SetRoomManager(this);
+        PlayerController.Instance.playerObject = playerObject;
 
         Debug.Log($"The room the player is in: {PlayerController.Instance.GetCurrentRoom()}"); // n�zd meg ha regeneratelni kell a roomokat, mert akkor lehet �jra kell createlni tudod
     }

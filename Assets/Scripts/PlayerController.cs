@@ -4,11 +4,13 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance { get; private set; } // singleton
 
+    internal GameObject playerObject;
     Rigidbody2D rb;
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private RoomManager roomManager;       // room creationn�l instantiatelem a playert, �gy nem ment�dik el a roommanager, look into it
+    private RoomManager roomManager;       // room creationn�l instantiatelem a playert, �gy nem ment�dik el a roommanager, look into it
     private Vector3 movement;
     private Room currentRoom;
+    private CameraFollow cameraFollow;
 
     public static PlayerController Instance
     {
@@ -35,6 +37,12 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation; // this is so the player won't bounce off of the edges of the wall
+
+        cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        if (cameraFollow == null)
+        {
+            Debug.LogError("CameraFollow script not found on the main camera.");
+        }
     }
 
     void Update()
@@ -81,16 +89,22 @@ public class PlayerController : MonoBehaviour
     {
         if (currentRoom != null)
         {
-            /*Debug.Log("Belemegy");
-            Vector2Int connectedRoomIndex = currentRoom.GetConnectedRoomIndex(direction);
+            Vector3 newPosition = playerObject.transform.position;
 
-            //Vector3 newPosition = currentRoom.GetDoorPositionInConnectedRoom(direction);
-            Vector3 newPosition = roomManager.GetPositionFromGridIndex(connectedRoomIndex);
-            //playerObject.transform.position = newPosition;
+            if (direction == Vector2Int.left)
+                newPosition += new Vector3(-1, 0, 0);
+            else if (direction == Vector2Int.right)
+                newPosition += new Vector3(1, 0, 0);
+            else if (direction == Vector2Int.up)
+                newPosition += new Vector3(0, 1, 0);
+            else if (direction == Vector2Int.down)
+                newPosition += new Vector3(0, -1, 0);
 
-            Debug.Log($"Player transitioning to the connected room {connectedRoomIndex}");
+            playerObject.transform.position = newPosition;
 
-            currentRoom = null;*/
+            //currentRoom = yet to be set
+
+            //cameraFollow.SetRoomToFollow(currentRoom.transform);
         }
     }
 
@@ -147,5 +161,10 @@ public class PlayerController : MonoBehaviour
     public void SetCurrentRoom(Room room)
     {
         currentRoom = room;
+    }
+
+    internal void SetRoomManager(RoomManager _roomManager)
+    {
+        roomManager = _roomManager;
     }
 }
