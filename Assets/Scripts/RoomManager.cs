@@ -24,6 +24,8 @@ public class RoomManager : MonoBehaviour
 
     private Queue<Vector2Int> roomQueue = new Queue<Vector2Int>();
 
+    private Room lastGeneratedRoom;
+
     private int[,] roomGrid;
 
     private int roomCount;
@@ -45,7 +47,7 @@ public class RoomManager : MonoBehaviour
         StartRoomGenerationFromRoom(initialRoomIndex);
     }
 
-    private void Update()
+    private void Update()       // generates either max amount of rooms or min amount of rooms, no in between
     {
         if(roomQueue.Count > 0 && roomCount < maxRooms && !generationComplete)
         {
@@ -67,11 +69,15 @@ public class RoomManager : MonoBehaviour
             playerObject = null;
             PlayerController.Instance.SetCurrentRoom(null);
 
+            lastGeneratedRoom = null;
+
             RegenerateRooms();
         }
-        else if (generationComplete)
+        else if (!generationComplete)
         {
+            MarkAsBossRoom(lastGeneratedRoom);
             Debug.Log($"Generation complete, {roomCount} rooms created");
+            generationComplete = true;
         }
     }
 
@@ -94,6 +100,8 @@ public class RoomManager : MonoBehaviour
         }
 
         cameraFollow.SetRoomToFollow(initialRoom.transform);
+
+        lastGeneratedRoom = initialRoom.GetComponent<Room>();
     }
 
     private void setUpPlayer(Vector2Int roomIndex, GameObject initialRoom)
@@ -127,7 +135,7 @@ public class RoomManager : MonoBehaviour
         if(roomCount >= maxRooms)
             return false;
         
-        if (roomGrid[x, y] == 1)
+        if (roomGrid[x, y] == 1)        // so rooms won't overlap
             return false;
         
         if(Random.value < 0.5f && roomIndex != Vector2Int.zero)
@@ -143,6 +151,8 @@ public class RoomManager : MonoBehaviour
         roomObjects.Add(newRoom);
 
         OpenDoors(newRoom, x, y);
+
+        lastGeneratedRoom = newRoom.GetComponent<Room>();
 
         return true;
     }
@@ -217,6 +227,14 @@ public class RoomManager : MonoBehaviour
 
             topRoomScript.OpenDoor(Vector2Int.down);
         }
+    }
+
+    private void MarkAsBossRoom(Room bossRoom)
+    {
+        // TBA
+        bossRoom.gameObject.tag = "BossRoom";
+        bossRoom.gameObject.name = "BossRoom";
+        Debug.Log($"The last generated room '{bossRoom.name}' has been marked as a boss room.");
     }
 
     Room GetRoomScriptAt(Vector2Int index)
