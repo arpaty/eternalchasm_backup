@@ -94,7 +94,10 @@ public class PlayerController : MonoBehaviour
             playerObject.transform.position = CalculateNewPlayerPosition(direction, playerPosition);
 
             roomManager.GetPositionFromGridIndex(currentRoom.RoomIndex);
-            //currentRoom = yet to be set
+
+            Vector2Int adjacentRoomIndex = currentRoom.GetConnectedRoomIndexFrom(direction);
+            Room adjacentRoom = roomManager.GetRoomScriptAt(adjacentRoomIndex);
+            SetCurrentRoom(adjacentRoom);
 
             cameraFollow.SetRoomToFollow(currentRoom.transform);
         }

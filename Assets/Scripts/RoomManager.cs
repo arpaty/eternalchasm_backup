@@ -231,7 +231,7 @@ public class RoomManager : MonoBehaviour
         Debug.Log($"The last generated room '{bossRoom.name}' has been marked as a boss room.");
     }
 
-    Room GetRoomScriptAt(Vector2Int index)
+    internal Room GetRoomScriptAt(Vector2Int index)
     {
         GameObject roomObject = roomObjects.Find(r => r.GetComponent<Room>().RoomIndex == index);
 

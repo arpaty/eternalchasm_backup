@@ -86,7 +86,7 @@ public class Room : MonoBehaviour
 
 
     // This method returns the connected room index based on the direction
-    public Vector2Int GetConnectedRoomIndex(Vector2Int direction)
+    public Vector2Int GetConnectedRoomIndexFrom(Vector2Int direction)
     {
         return RoomIndex + direction;
     }
