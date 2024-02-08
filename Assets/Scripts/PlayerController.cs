@@ -89,23 +89,29 @@ public class PlayerController : MonoBehaviour
     {
         if (currentRoom != null)
         {
-            Vector3 newPosition = playerObject.transform.position;
+            Vector3 playerPosition = playerObject.transform.position;
 
-            if (direction == Vector2Int.left)
-                newPosition += new Vector3(-1, 0, 0);
-            else if (direction == Vector2Int.right)
-                newPosition += new Vector3(1, 0, 0);
-            else if (direction == Vector2Int.up)
-                newPosition += new Vector3(0, 1, 0);
-            else if (direction == Vector2Int.down)
-                newPosition += new Vector3(0, -1, 0);
+            playerObject.transform.position = CalculateNewPlayerPosition(direction, playerPosition);
 
-            playerObject.transform.position = newPosition;
-
+            roomManager.GetPositionFromGridIndex(currentRoom.RoomIndex);
             //currentRoom = yet to be set
 
-            //cameraFollow.SetRoomToFollow(currentRoom.transform);
+            cameraFollow.SetRoomToFollow(currentRoom.transform);
         }
+    }
+
+    Vector3 CalculateNewPlayerPosition(Vector2Int direction, Vector3 newPlayerPosition)
+    {
+        if (direction == Vector2Int.left)
+            newPlayerPosition += new Vector3(-5, 0, 0);
+        else if (direction == Vector2Int.right)
+            newPlayerPosition += new Vector3(5, 0, 0);
+        else if (direction == Vector2Int.up)
+            newPlayerPosition += new Vector3(0, 5, 0);
+        else if (direction == Vector2Int.down)
+            newPlayerPosition += new Vector3(0, -5, 0);
+
+        return newPlayerPosition;
     }
 
     Vector2Int DetermineDirectionOfDoor(GameObject door)

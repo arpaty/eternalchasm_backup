@@ -25,6 +25,7 @@ public class RoomManager : MonoBehaviour
     private Room lastGeneratedRoom;
 
     private int[,] roomGrid;
+    private Room[,] rooms;
 
     private int roomCount;
 
@@ -33,6 +34,7 @@ public class RoomManager : MonoBehaviour
     private void Start()
     {
         roomGrid = new int [gridSizeX, gridSizeY];
+        rooms = new Room[gridSizeX, gridSizeY];
         roomQueue = new Queue<Vector2Int>();
 
         Vector2Int initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
@@ -246,6 +248,23 @@ public class RoomManager : MonoBehaviour
         return new Vector3(roomWidth * (gridX - gridSizeX / 2), 
             roomHeight * (gridY - gridSizeY / 2));
     }
+
+    /*Room GetAdjacentRoomFromDirection(Vector2Int direction)
+    {
+        Room currentRoom = PlayerController.Instance.GetCurrentRoom;
+        Room adjacentRoom = currentRoom;
+
+        if (direction == Vector2Int.left)
+            adjacentRoom = GetPositionFromGridIndex(currentRoom.)
+        else if (direction == Vector2Int.right)
+            adjacentRoom
+        else if (direction == Vector2Int.up)
+            adjacentRoom
+        else if (direction == Vector2Int.down)
+            adjacentRoom
+
+        return newPlayerPosition;
+    }*/
 
     private void OnDrawGizmos()
     {
