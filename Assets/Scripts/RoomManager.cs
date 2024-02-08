@@ -18,13 +18,14 @@ public class RoomManager : MonoBehaviour
     [SerializeField] int gridSizeX = 10;
     [SerializeField] int gridSizeY = 10;
 
-    private CameraFollow cameraFollow;
-
     private List<GameObject> roomObjects = new List<GameObject>();
 
     private Queue<Vector2Int> roomQueue = new Queue<Vector2Int>();
 
+    private Room lastGeneratedRoom;
+
     private int[,] roomGrid;
+    private Room[,] rooms;
 
     private int roomCount;
 
@@ -33,19 +34,14 @@ public class RoomManager : MonoBehaviour
     private void Start()
     {
         roomGrid = new int [gridSizeX, gridSizeY];
+        rooms = new Room[gridSizeX, gridSizeY];
         roomQueue = new Queue<Vector2Int>();
-
-        cameraFollow = Camera.main.GetComponent<CameraFollow>();
-        if (cameraFollow == null)
-        {
-            Debug.LogError("CameraFollow script not found on the main camera.");
-        }
 
         Vector2Int initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
         StartRoomGenerationFromRoom(initialRoomIndex);
     }
 
-    private void Update()
+    private void Update()       // generates either max amount of rooms or min amount of rooms, no in between
     {
         if(roomQueue.Count > 0 && roomCount < maxRooms && !generationComplete)
         {
@@ -67,11 +63,15 @@ public class RoomManager : MonoBehaviour
             playerObject = null;
             PlayerController.Instance.SetCurrentRoom(null);
 
+            lastGeneratedRoom = null;
+
             RegenerateRooms();
         }
-        else if (generationComplete)
+        else if (!generationComplete)
         {
+            MarkAsBossRoom(lastGeneratedRoom);
             Debug.Log($"Generation complete, {roomCount} rooms created");
+            generationComplete = true;
         }
     }
 
@@ -93,7 +93,7 @@ public class RoomManager : MonoBehaviour
             setUpPlayer(roomIndex, initialRoom);
         }
 
-        cameraFollow.SetRoomToFollow(initialRoom.transform);
+        lastGeneratedRoom = initialRoom.GetComponent<Room>();
     }
 
     private void setUpPlayer(Vector2Int roomIndex, GameObject initialRoom)
@@ -112,6 +112,8 @@ public class RoomManager : MonoBehaviour
         }
 
         PlayerController.Instance.SetCurrentRoom(currentRoomComponent);
+        PlayerController.Instance.SetRoomManager(this);
+        PlayerController.Instance.playerObject = playerObject;
 
         Debug.Log($"The room the player is in: {PlayerController.Instance.GetCurrentRoom()}"); // n�zd meg ha regeneratelni kell a roomokat, mert akkor lehet �jra kell createlni tudod
     }
@@ -127,7 +129,7 @@ public class RoomManager : MonoBehaviour
         if(roomCount >= maxRooms)
             return false;
         
-        if (roomGrid[x, y] == 1)
+        if (roomGrid[x, y] == 1)        // so rooms won't overlap
             return false;
         
         if(Random.value < 0.5f && roomIndex != Vector2Int.zero)
@@ -143,6 +145,8 @@ public class RoomManager : MonoBehaviour
         roomObjects.Add(newRoom);
 
         OpenDoors(newRoom, x, y);
+
+        lastGeneratedRoom = newRoom.GetComponent<Room>();
 
         return true;
     }
@@ -219,7 +223,15 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    Room GetRoomScriptAt(Vector2Int index)
+    private void MarkAsBossRoom(Room bossRoom)
+    {
+        // TBA
+        bossRoom.gameObject.tag = "BossRoom";
+        bossRoom.gameObject.name = "BossRoom";
+        Debug.Log($"The last generated room '{bossRoom.name}' has been marked as a boss room.");
+    }
+
+    internal Room GetRoomScriptAt(Vector2Int index)
     {
         GameObject roomObject = roomObjects.Find(r => r.GetComponent<Room>().RoomIndex == index);
 
@@ -236,6 +248,23 @@ public class RoomManager : MonoBehaviour
         return new Vector3(roomWidth * (gridX - gridSizeX / 2), 
             roomHeight * (gridY - gridSizeY / 2));
     }
+
+    /*Room GetAdjacentRoomFromDirection(Vector2Int direction)
+    {
+        Room currentRoom = PlayerController.Instance.GetCurrentRoom;
+        Room adjacentRoom = currentRoom;
+
+        if (direction == Vector2Int.left)
+            adjacentRoom = GetPositionFromGridIndex(currentRoom.)
+        else if (direction == Vector2Int.right)
+            adjacentRoom
+        else if (direction == Vector2Int.up)
+            adjacentRoom
+        else if (direction == Vector2Int.down)
+            adjacentRoom
+
+        return newPlayerPosition;
+    }*/
 
     private void OnDrawGizmos()
     {

@@ -38,33 +38,28 @@ public class Room : MonoBehaviour
         }
     }
 
-    Transform GetDoorTransform(Vector2Int direction)
+    internal Vector3 GetDoorPosition(Vector2Int direction)
     {
         Transform doorsParent = transform.Find("Doors");
 
         if (doorsParent == null)
         {
             Debug.LogError("Doors parent not found.");
-            return null;
+            return Vector3.zero;
         }
 
-        Transform doorTransform = null;
+        Vector3 doorPosition = Vector3.zero;
 
         if (direction == Vector2Int.left)
-            doorTransform = doorsParent.Find("LeftDoor");
+            doorPosition = doorsParent.Find("LeftDoor").position;
         else if (direction == Vector2Int.right)
-            doorTransform = doorsParent.Find("RightDoor");
+            doorPosition = doorsParent.Find("RightDoor").position;
         else if (direction == Vector2Int.up)
-            doorTransform = doorsParent.Find("TopDoor");
+            doorPosition = doorsParent.Find("TopDoor").position;
         else if (direction == Vector2Int.down)
-            doorTransform = doorsParent.Find("BottomDoor");
+            doorPosition = doorsParent.Find("BottomDoor").position;
 
-        if (doorTransform == null)
-        {
-            Debug.LogError($"Door in direction {direction} not found.");
-        }
-
-        return doorTransform;
+        return doorPosition;
     }
 
     public void SetDoorTriggerState(GameObject doorObject, bool isTrigger)
@@ -91,12 +86,8 @@ public class Room : MonoBehaviour
 
 
     // This method returns the connected room index based on the direction
-    public Vector2Int GetConnectedRoomIndex(Vector2Int direction)
+    public Vector2Int GetConnectedRoomIndexFrom(Vector2Int direction)
     {
-        // Implement logic to determine the connected room index based on the direction
-        // This could involve looking up a predefined mapping or using some algorithm
-        // In a simple example, we'll just return the current room index plus the direction.
-
         return RoomIndex + direction;
     }
 
