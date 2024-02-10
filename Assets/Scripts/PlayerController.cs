@@ -31,9 +31,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Rigidbody2D rb = Player.Instance.GetRigidBody();
+        Rigidbody2D rb = Player.Instance.GetRigidBody();
 
-        //rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
+        rb.MovePosition(transform.position + movement * Player.Instance.GetMoveSpeed() * Time.deltaTime);
     }
 
     void OnCollisionEnter2D(Collision2D collision)

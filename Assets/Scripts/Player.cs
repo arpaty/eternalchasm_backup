@@ -35,10 +35,7 @@ public class Player : MonoBehaviour
             instance = this;
             Debug.Log("Player instance created.");
         }
-    }
 
-    void Start()
-    {
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation; // this is so the player won't bounce off of the edges of the wall
     }
@@ -81,5 +78,10 @@ public class Player : MonoBehaviour
     public void SetPlayerObject(GameObject _playerObject)
     {
         playerObject = _playerObject;
+    }
+    
+    public float GetMoveSpeed()
+    {
+        return moveSpeed;
     }
 }

@@ -114,8 +114,8 @@ public class RoomManager : MonoBehaviour
         }
 
         Player.Instance.SetPlayerObject(playerObject);
+        
         playerController = playerObject.GetComponent<PlayerController>();
-
         Player.Instance.SetPlayerController(playerController);
 
     
