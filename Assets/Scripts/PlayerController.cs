@@ -2,42 +2,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController instance { get; private set; } // singleton
-
-    internal GameObject playerObject;
-    Rigidbody2D rb;
-    [SerializeField] private float moveSpeed = 5f;
     private RoomManager roomManager;       // room creationn�l instantiatelem a playert, �gy nem ment�dik el a roommanager, look into it
     private Vector3 movement;
     private Room currentRoom;
     private CameraFollow cameraFollow;
 
-    public static PlayerController Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<PlayerController>();
-            }
-            return instance;
-        }
-    }
-
-    void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            Debug.Log("PlayerController instance created.");
-        }
-    }
-
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // this is so the player won't bounce off of the edges of the wall
-
         cameraFollow = Camera.main.GetComponent<CameraFollow>();
         if (cameraFollow == null)
         {
@@ -60,7 +31,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
+        //Rigidbody2D rb = Player.Instance.GetRigidBody();
+
+        //rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -76,7 +49,7 @@ public class PlayerController : MonoBehaviour
             // Handle door interaction
             Debug.Log("Player entered the door!");
             Vector2Int direction = DetermineDirectionOfDoor(other.gameObject);
-            MoveToConnectedRoom(direction); // be kell fejezni m�g, nincs meg
+            MoveToConnectedRoom(direction);
         }
         else if (other.CompareTag("Walls"))
         {
@@ -89,11 +62,10 @@ public class PlayerController : MonoBehaviour
     {
         if (currentRoom != null)
         {
+            GameObject playerObject = Player.Instance.GetPlayerObject();
             Vector3 playerPosition = playerObject.transform.position;
 
             playerObject.transform.position = CalculateNewPlayerPosition(direction, playerPosition);
-
-            roomManager.GetPositionFromGridIndex(currentRoom.RoomIndex);
 
             Vector2Int adjacentRoomIndex = currentRoom.GetConnectedRoomIndexFrom(direction);
             Room adjacentRoom = roomManager.GetRoomScriptAt(adjacentRoomIndex);

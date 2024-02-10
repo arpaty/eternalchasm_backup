@@ -5,8 +5,10 @@ using UnityEngine;
 public class RoomManager : MonoBehaviour
 {
     private GameObject playerObject;
-    private PlayerController playerController;
     private Vector2 doorSize = new Vector2(1.0f, 1.0f);
+
+    private PlayerController playerController;
+
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject roomPrefab;
     [SerializeField] private int maxRooms = 20;
@@ -61,7 +63,7 @@ public class RoomManager : MonoBehaviour
 
             Destroy(playerObject);
             playerObject = null;
-            PlayerController.Instance.SetCurrentRoom(null);
+            Player.Instance.SetCurrentRoom(null);
 
             lastGeneratedRoom = null;
 
@@ -101,21 +103,26 @@ public class RoomManager : MonoBehaviour
         Room currentRoomComponent = initialRoom.GetComponent<Room>();
         Vector3 playerPosition = GetPositionFromGridIndex(roomIndex);
         playerPosition.z = 0;
-
+        
         playerObject = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
         playerObject.name = "Player";
 
-        if(PlayerController.Instance == null)
+        if(Player.Instance == null)
         {
-            Debug.LogError("PlayerController.Instance is null. Make sure it's properly initialized before calling setUpPlayer.");
+            Debug.LogError("Player.Instance is null. Make sure it's properly initialized before calling setUpPlayer.");
             return;
         }
 
-        PlayerController.Instance.SetCurrentRoom(currentRoomComponent);
-        PlayerController.Instance.SetRoomManager(this);
-        PlayerController.Instance.playerObject = playerObject;
+        Player.Instance.SetPlayerObject(playerObject);
+        playerController = playerObject.GetComponent<PlayerController>();
 
-        Debug.Log($"The room the player is in: {PlayerController.Instance.GetCurrentRoom()}"); // n�zd meg ha regeneratelni kell a roomokat, mert akkor lehet �jra kell createlni tudod
+        Player.Instance.SetPlayerController(playerController);
+
+    
+        Player.Instance.SetCurrentRoom(currentRoomComponent);
+        Player.Instance.GetPlayerController().SetRoomManager(this);
+
+        Debug.Log($"The room the player is in: {Player.Instance.GetCurrentRoom()}"); // n�zd meg ha regeneratelni kell a roomokat, mert akkor lehet �jra kell createlni tudod
     }
 
     private bool TryGenerateRoom(Vector2Int roomIndex)
