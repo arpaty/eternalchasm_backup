@@ -60,8 +60,9 @@ public class PlayerController : MonoBehaviour
 
     void MoveToConnectedRoom(Vector2Int direction)
     {
-        if (currentRoom != null)
+        if (Player.Instance.GetCurrentRoom() != null)
         {
+            //Debug.Log($"Currentroom {currentRoom}");
             GameObject playerObject = Player.Instance.GetPlayerObject();
             Vector3 playerPosition = playerObject.transform.position;
 

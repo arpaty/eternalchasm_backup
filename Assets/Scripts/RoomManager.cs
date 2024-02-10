@@ -121,6 +121,7 @@ public class RoomManager : MonoBehaviour
     
         Player.Instance.SetCurrentRoom(currentRoomComponent);
         Player.Instance.GetPlayerController().SetRoomManager(this);
+        Player.Instance.GetPlayerController().SetCurrentRoom(currentRoomComponent);
 
         Debug.Log($"The room the player is in: {Player.Instance.GetCurrentRoom()}"); // n�zd meg ha regeneratelni kell a roomokat, mert akkor lehet �jra kell createlni tudod
     }
