@@ -6,9 +6,11 @@ public class PlayerController : MonoBehaviour
     private Vector3 movement;
     private Room currentRoom;
     private CameraFollow cameraFollow;
+    private Vector2Int cumulativeDirection = Vector2Int.zero;
 
     void Start()
     {
+        currentRoom = Player.Instance.GetCurrentRoom();
         cameraFollow = Camera.main.GetComponent<CameraFollow>();
         if (cameraFollow == null)
         {
@@ -58,6 +60,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void OnDirectionInput(Vector2Int direction)
+    {
+        cumulativeDirection += direction;
+    }
+
+
     void MoveToConnectedRoom(Vector2Int direction)
     {
         if (Player.Instance.GetCurrentRoom() != null)
@@ -66,7 +74,9 @@ public class PlayerController : MonoBehaviour
             GameObject playerObject = Player.Instance.GetPlayerObject();
             Vector3 playerPosition = playerObject.transform.position;
 
-            playerObject.transform.position = CalculateNewPlayerPosition(direction, playerPosition);
+            Debug.Log($"Direction {direction}");
+
+            playerObject.transform.position = CalculateNewPlayerPositione(direction, playerPosition);
 
             Vector2Int adjacentRoomIndex = currentRoom.GetConnectedRoomIndexFrom(direction);
             Room adjacentRoom = roomManager.GetRoomScriptAt(adjacentRoomIndex);
@@ -90,7 +100,24 @@ public class PlayerController : MonoBehaviour
         return newPlayerPosition;
     }
 
-    Vector2Int DetermineDirectionOfDoor(GameObject door)
+    Vector3 CalculateNewPlayerPositione(Vector2Int direction, Vector3 newPlayerPosition)
+    {
+        float moveSpeed = 5f;
+
+        Vector3 movement = Vector3.zero;
+        if (direction.x != 0)
+            movement += new Vector3(direction.x * moveSpeed, 0, 0);
+        if (direction.y != 0)
+            movement += new Vector3(0, direction.y * moveSpeed, 0);
+        if(direction.x != 0 && direction.y != 0)
+            movement += new Vector3(direction.x * moveSpeed, direction.y * moveSpeed, 0);
+
+        newPlayerPosition += movement;
+
+        return newPlayerPosition;
+    }
+
+    Vector2Int DetermineDirectionOfDoor(GameObject door)        // seems to be bugging out when entering the side of the door, not in the center (gives wrong directional input)
     {
         Vector3 doorPosition = door.transform.position;
         Vector3 playerPosition = transform.position;
@@ -134,6 +161,7 @@ public class PlayerController : MonoBehaviour
 
         return directionOfDoor;
     }
+
 
     public Room GetCurrentRoom()
     {
